@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Plataforma de Economía Circular para la reducción de residuos sólidos">
+    <meta name="keywords" content="economía circular, reciclaje, reutilización, sostenibilidad">
+    <title>Plataforma de Economía Circular</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>♻️ Plataforma de Economía Circular</h1>
+            <p class="subtitle">Reduciendo residuos sólidos mediante reutilización, intercambio y reciclaje</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('inicio')">🏠 Inicio</button>
+            <button class="tab-btn" onclick="openTab('publicar')">📤 Publicar Producto</button>
+            <button class="tab-btn" onclick="openTab('marketplace')">🛒 Marketplace</button>
+            <button class="tab-btn" onclick="openTab('estadisticas')">📊 Estadísticas</button>
+            <button class="tab-btn" onclick="openTab('educacion')">📚 Educación</button>
+        </div>
+
+        <div id="inicio" class="tab-content active">
+            <h2 style="color: #667eea; margin-bottom: 20px;">Bienvenido a la Economía Circular</h2>
+            <p style="font-size: 1.1em; line-height: 1.8; color: #555; margin-bottom: 30px;">
+                Nuestra plataforma conecta personas y empresas para dar nueva vida a productos y materiales, 
+                reduciendo significativamente la generación de residuos sólidos y promoviendo un consumo sostenible.
+            </p>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="icon">🔄</div>
+                    <h3>Reutilización</h3>
+                    <p>Dale una segunda vida a tus productos. Publica artículos que ya no uses para que otros puedan aprovecharlos.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">🤝</div>
+                    <h3>Intercambio</h3>
+                    <p>Intercambia productos con otros usuarios. Un objeto que no necesitas puede ser valioso para alguien más.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">♻️</div>
+                    <h3>Reciclaje</h3>
+                    <p>Encuentra puntos de reciclaje cercanos y aprende cómo separar correctamente tus residuos.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">🌱</div>
+                    <h3>Impacto Ambiental</h3>
+                    <p>Cada producto reutilizado es un residuo menos en vertederos y menor consumo de recursos naturales.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="publicar" class="tab-content">
+            <h2 style="color: #667eea; margin-bottom: 20px;">Publicar Producto</h2>
+            <p style="margin-bottom: 30px; color: #666;">Completa el formulario para publicar un producto que desees reutilizar, donar o intercambiar.</p>
+
+            <form id="productForm">
+                <div class="form-group">
+                    <label>Nombre del Producto *</label>
+                    <input type="text" id="productName" required placeholder="Ej: Silla de oficina">
+                </div>
+
+                <div class="form-group">
+                    <label>Categoría *</label>
+                    <select id="category" required>
+                        <option value="">Selecciona una categoría</option>
+                        <option value="muebles">Muebles</option>
+                        <option value="electronica">Electrónica</option>
+                        <option value="ropa">Ropa y Textiles</option>
+                        <option value="libros">Libros y Educación</option>
+                        <option value="hogar">Hogar y Decoración</option>
+                        <option value="juguetes">Juguetes</option>
+                        <option value="otros">Otros</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Estado del Producto *</label>
+                    <select id="condition" required>
+                        <option value="">Selecciona el estado</option>
+                        <option value="nuevo">Nuevo</option>
+                        <option value="excelente">Excelente</option>
+                        <option value="bueno">Bueno</option>
+                        <option value="regular">Regular</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de Oferta *</label>
+                    <select id="offerType" required>
+                        <option value="">Selecciona una opción</option>
+                        <option value="donacion">Donación</option>
+                        <option value="intercambio">Intercambio</option>
+                        <option value="venta">Venta (precio simbólico)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Descripción *</label>
+                    <textarea id="description" required placeholder="Describe el producto, sus características y por qué lo ofreces..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Ubicación</label>
+                    <input type="text" id="location" placeholder="Distrito, ciudad">
+                </div>
+
+                <button type="submit">Publicar Producto</button>
+                <div class="success-message" id="successMsg">
+                    ✅ ¡Producto publicado exitosamente! Gracias por contribuir a la economía circular.
+                </div>
+            </form>
+        </div>
+
+        <div id="marketplace" class="tab-content">
+            <h2 style="color: #667eea; margin-bottom: 20px;">Marketplace de Productos</h2>
+            <p style="margin-bottom: 30px; color: #666;">Explora productos disponibles para reutilización e intercambio.</p>
+
+            <div class="product-list" id="productList">
+                <div class="product-item">
+                    <div class="product-info">
+                        <h4>📚 Colección de Libros Universitarios</h4>
+                        <p>Libros de ingeniería en excelente estado - San Isidro, Lima</p>
+                    </div>
+                    <span class="product-status status-disponible">Disponible</span>
+                </div>
+
+                <div class="product-item">
+                    <div class="product-info">
+                        <h4>💻 Laptop HP para Reparar</h4>
+                        <p>Componentes funcionales para reciclaje electrónico - Miraflores</p>
+                    </div>
+                    <span class="product-status status-reciclado">Para Reciclaje</span>
+                </div>
+
+                <div class="product-item">
+                    <div class="product-info">
+                        <h4>🪑 Mesa de Comedor de Madera</h4>
+                        <p>Buen estado, ideal para restaurar - San Borja</p>
+                    </div>
+                    <span class="product-status status-intercambio">Intercambio</span>
+                </div>
+
+                <div class="product-item">
+                    <div class="product-info">
+                        <h4>👕 Ropa de Temporada</h4>
+                        <p>Camisas y pantalones talla M/L - Surco</p>
+                    </div>
+                    <span class="product-status status-disponible">Donación</span>
+                </div>
+
+                <div class="product-item">
+                    <div class="product-info">
+                        <h4>🎮 Consola de Videojuegos Retro</h4>
+                        <p>Funcional, incluye controles - La Molina</p>
+                    </div>
+                    <span class="product-status status-intercambio">Intercambio</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="estadisticas" class="tab-content">
+            <h2 style="color: #667eea; margin-bottom: 20px;">Impacto de la Economía Circular</h2>
+            <p style="margin-bottom: 30px; color: #666;">Monitoreo del impacto ambiental de nuestra comunidad.</p>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="productsSaved">847</div>
+                    <div class="stat-label">Productos Reutilizados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="wasteReduced">2.3</div>
+                    <div class="stat-label">Toneladas de Residuos Evitados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="co2Saved">5,420</div>
+                    <div class="stat-label">kg CO₂ Reducidos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeUsers">1,234</div>
+                    <div class="stat-label">Usuarios Activos</div>
+                </div>
+            </div>
+
+            <div class="cards-grid" style="margin-top: 40px;">
+                <div class="card">
+                    <h3>📈 Tendencias</h3>
+                    <p>Las categorías más activas este mes: Electrónica (32%), Muebles (28%), y Ropa (24%).</p>
+                </div>
+                <div class="card">
+                    <h3>🏆 Logros</h3>
+                    <p>Este mes se superó la meta de reducción de residuos en un 15%. ¡Excelente trabajo comunidad!</p>
+                </div>
+                <div class="card">
+                    <h3>🎯 Objetivos</h3>
+                    <p>Meta para el próximo mes: alcanzar 1,000 productos reutilizados y reducir 3 toneladas de residuos.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="educacion" class="tab-content">
+            <h2 style="color: #667eea; margin-bottom: 20px;">Recursos Educativos</h2>
+            <p style="margin-bottom: 30px; color: #666;">Aprende sobre economía circular y cómo reducir tu huella ambiental.</p>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="icon">📖</div>
+                    <h3>¿Qué es la Economía Circular?</h3>
+                    <p>Un modelo de producción y consumo que implica compartir, alquilar, reutilizar, reparar, renovar y reciclar materiales y productos existentes el mayor tiempo posible.</p>
+                </div>
+
+                <div class="card">
+                    <div class="icon">🔢</div>
+                    <h3>Las 7 R's de la Sostenibilidad</h3>
+                    <p><strong>Rediseñar, Reducir, Reutilizar, Reparar, Renovar, Recuperar y Reciclar.</strong> Principios fundamentales para minimizar residuos.</p>
+                </div>
+
+                <div class="card">
+                    <div class="icon">🗑️</div>
+                    <h3>Separación de Residuos</h3>
+                    <p><strong>Orgánicos:</strong> restos de comida. <strong>Reciclables:</strong> papel, cartón, plástico, vidrio, metal. <strong>Peligrosos:</strong> baterías, electrónicos, químicos.</p>
+                </div>
+
+                <div class="card">
+                    <div class="icon">💡</div>
+                    <h3>Consejos Prácticos</h3>
+                    <p>Compra productos duraderos, repara en lugar de desechar, dona lo que no uses, prefiere productos con empaques reciclables.</p>
+                </div>
+
+                <div class="card">
+                    <div class="icon">🌍</div>
+                    <h3>Impacto Global</h3>
+                    <p>Cada año se generan 2,000 millones de toneladas de residuos sólidos en el mundo. La economía circular puede reducir esto significativamente.</p>
+                </div>
+
+                <div class="card">
+                    <div class="icon">🏭</div>
+                    <h3>Puntos de Reciclaje</h3>
+                    <p>Encuentra centros de acopio cercanos para papel, plástico, vidrio, electrónicos y otros materiales reciclables en tu distrito.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
