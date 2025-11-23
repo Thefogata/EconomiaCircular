@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Eficiencia Energética - Generador Hidráulico</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #cffafe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #1e293b;
+        }
+
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .kpi-card {
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .kpi-card.blue {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        .kpi-card.green {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .kpi-card.purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .kpi-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .kpi-unit {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .controls {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        .controls h2 {
+            color: #1e293b;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-label {
+            display: block;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .slider {
+            width: 100%;
+            height: 12px;
+            border-radius: 6px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider.blue {
+            background: #bfdbfe;
+        }
+
+        .slider.green {
+            background: #bbf7d0;
+        }
+
+        .slider.yellow {
+            background: #fde68a;
+        }
+
+        .slider.purple {
+            background: #ddd6fe;
+        }
+
+        .slider-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        .slider-current {
+            font-weight: bold;
+            color: #3b82f6;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .chart-container {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container h3 {
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .info-card {
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid;
+        }
+
+        .info-card.blue {
+            background: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .info-card.green {
+            background: #f0fdf4;
+            border-color: #10b981;
+        }
+
+        .info-card h4 {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .info-card.blue h4 {
+            color: #1e40af;
+        }
+
+        .info-card.green h4 {
+            color: #065f46;
+        }
+
+        .info-list {
+            list-style: none;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .info-card.blue .info-list {
+            color: #1e40af;
+        }
+
+        .info-card.green .info-list {
+            color: #065f46;
+        }
+
+        .icon {
+            width: 32px;
+            height: 32px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <svg class="icon" fill="none" stroke="#3b82f6" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+                    <path d="M12,2C6.477,2,2,6.477,2,12s4.477,10,10,10s10-4.477,10-10S17.523,2,12,2z"></path>
+                </svg>
+                <h1>Simulador de Eficiencia Energética</h1>
+            </div>
+            <p class="subtitle">Analiza el rendimiento de tu generador hidroeléctrico en tiempo real</p>
+
+            <div class="kpi-grid">
+                <div class="kpi-card blue">
+                    <div class="kpi-label">Eficiencia Total</div>
+                    <div class="kpi-value" id="eficienciaTotal">0</div>
+                    <div class="kpi-unit">% Sistema completo</div>
+                </div>
+                <div class="kpi-card green">
+                    <div class="kpi-label">Potencia Real</div>
+                    <div class="kpi-value" id="potenciaReal">0</div>
+                    <div class="kpi-unit">kW de salida</div>
+                </div>
+                <div class="kpi-card purple">
+                    <div class="kpi-label">Energía Anual</div>
+                    <div class="kpi-value" id="energiaAnual">0</div>
+                    <div class="kpi-unit">MWh/año (FC 75%)</div>
+                </div>
+            </div>
+
+            <div class="main-grid">
+                <div class="controls">
+                    <h2>⚙️ Parámetros de Entrada</h2>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Caudal (m³/s)</label>
+                        <input type="range" class="slider blue" id="caudal" min="1" max="100" step="0.5" value="10">
+                        <div class="slider-values">
+                            <span>1 m³/s</span>
+                            <span class="slider-current" id="caudalValue">10 m³/s</span>
+                            <span>100 m³/s</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Altura Neta (m)</label>
+                        <input type="range" class="slider green" id="altura" min="5" max="500" step="5" value="50">
+                        <div class="slider-values">
+                            <span>5 m</span>
+                            <span class="slider-current" id="alturaValue">50 m</span>
+                            <span>500 m</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Tipo de Turbina</label>
+                        <select id="turbineType">
+                            <option value="pelton">Pelton (η: 90% | H min: 50m)</option>
+                            <option value="francis" selected>Francis (η: 92% | H min: 10m)</option>
+                            <option value="kaplan">Kaplan (η: 93% | H min: 2m)</option>
+                            <option value="crossflow">Flujo Cruzado (η: 85% | H min: 5m)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Eficiencia Generador (%)</label>
+                        <input type="range" class="slider yellow" id="generatorEff" min="85" max="98" step="0.5" value="95">
+                        <div class="slider-values">
+                            <span>85%</span>
+                            <span class="slider-current" id="generatorEffValue">95%</span>
+                            <span>98%</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Eficiencia Transmisión (%)</label>
+                        <input type="range" class="slider purple" id="transmissionEff" min="90" max="99" step="0.5" value="98">
+                        <div class="slider-values">
+                            <span>90%</span>
+                            <span class="slider-current" id="transmissionEffValue">98%</span>
+                            <span>99%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="chart-container">
+                        <h3>📊 Flujo de Potencia</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="powerFlowChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <h3>🔴 Distribución de Pérdidas</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="lossesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>📈 Historial de Eficiencia</h3>
+                <div class="chart-wrapper">
+                    <canvas id="historyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card blue">
+                    <h4>ℹ️ Indicadores Clave</h4>
+                    <ul class="info-list">
+                        <li>• Potencia Hidráulica: <span id="potenciaHidraulica">0</span> kW</li>
+                        <li>• Eficiencia Turbina: <span id="eficienciaTurbina">0</span>%</li>
+                        <li>• Pérdidas Totales: <span id="perdidasTotales">0</span> kW</li>
+                    </ul>
+                </div>
+
+                <div class="info-card green">
+                    <h4>📊 Recomendaciones</h4>
+                    <p class="info-list" id="recomendacion">Calculando...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const turbineTypes = {
+            pelton: { efficiency: 90, color: '#3b82f6' },
+            francis: { efficiency: 92, color: '#10b981' },
+            kaplan: { efficiency: 93, color: '#8b5cf6' },
+            crossflow: { efficiency: 85, color: '#f59e0b' }
+        };
+
+        let powerFlowChart, lossesChart, historyChart;
+        let historyData = [];
+
+        function initCharts() {
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                }
+            };
+
+            powerFlowChart = new Chart(document.getElementById('powerFlowChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Hidráulica', 'Turbina', 'Generador', 'Real'],
+                    datasets: [{
+                        label: 'Potencia (kW)',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6']
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Potencia (kW)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            lossesChart = new Chart(document.getElementById('lossesChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Turbina', 'Generador', 'Transmisión'],
+                    datasets: [{
+                        data: [0, 0, 0],
+                        backgroundColor: ['#ef4444', '#f59e0b', '#fbbf24']
+                    }]
+                },
+                options: commonOptions
+            });
+
+            historyChart = new Chart(document.getElementById('historyChart'), {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Eficiencia (%)',
+                        data: [],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Eficiencia (%)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Simulación #'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function calculate() {
+            const caudal = parseFloat(document.getElementById('caudal').value);
+            const altura = parseFloat(document.getElementById('altura').value);
+            const turbineType = document.getElementById('turbineType').value;
+            const generatorEff = parseFloat(document.getElementById('generatorEff').value);
+            const transmissionEff = parseFloat(document.getElementById('transmissionEff').value);
+
+            const g = 9.81;
+            const rhoWater = 1000;
+
+            const potenciaHidraulica = (rhoWater * g * caudal * altura) / 1000;
+            const turbineEff = turbineTypes[turbineType].efficiency / 100;
+            const potenciaTurbina = potenciaHidraulica * turbineEff;
+            const potenciaGenerador = potenciaTurbina * (generatorEff / 100);
+            const potenciaReal = potenciaGenerador * (transmissionEff / 100);
+
+            const eficienciaTotal = (potenciaReal / potenciaHidraulica) * 100;
+
+            const perdidasTurbina = potenciaHidraulica - potenciaTurbina;
+            const perdidasGenerador = potenciaTurbina - potenciaGenerador;
+            const perdidasTransmision = potenciaGenerador - potenciaReal;
+            const perdidasTotales = perdidasTurbina + perdidasGenerador + perdidasTransmision;
+
+            const energiaAnual = potenciaReal * 24 * 365 / 1000 * 0.75;
+
+            document.getElementById('eficienciaTotal').textContent = eficienciaTotal.toFixed(2);
+            document.getElementById('potenciaReal').textContent = potenciaReal.toFixed(2);
+            document.getElementById('energiaAnual').textContent = energiaAnual.toFixed(2);
+            document.getElementById('potenciaHidraulica').textContent = potenciaHidraulica.toFixed(2);
+            document.getElementById('eficienciaTurbina').textContent = (turbineEff * 100).toFixed(2);
+            document.getElementById('perdidasTotales').textContent = perdidasTotales.toFixed(2);
+
+            const recomendacion = eficienciaTotal >= 80 
+                ? '✓ Sistema operando en rango óptimo'
+                : eficienciaTotal >= 70
+                ? '⚠ Considere mantenimiento preventivo'
+                : '⚠ Requiere revisión urgente del sistema';
+            document.getElementById('recomendacion').textContent = recomendacion;
+
+            powerFlowChart.data.datasets[0].data = [
+                potenciaHidraulica.toFixed(2),
+                potenciaTurbina.toFixed(2),
+                potenciaGenerador.toFixed(2),
+                potenciaReal.toFixed(2)
+            ];
+            powerFlowChart.update();
+
+            lossesChart.data.datasets[0].data = [
+                perdidasTurbina.toFixed(2),
+                perdidasGenerador.toFixed(2),
+                perdidasTransmision.toFixed(2)
+            ];
+            lossesChart.update();
+
+            if (historyData.length < 20) {
+                historyData.push(eficienciaTotal.toFixed(2));
+                historyChart.data.labels = historyData.map((_, i) => i + 1);
+                historyChart.data.datasets[0].data = historyData;
+                historyChart.update();
+            }
+        }
+
+        function setupEventListeners() {
+            const inputs = ['caudal', 'altura', 'generatorEff', 'transmissionEff'];
+            inputs.forEach(id => {
+                const element = document.getElementById(id);
+                element.addEventListener('input', (e) => {
+                    document.getElementById(id + 'Value').textContent = 
+                        e.target.value + (id === 'caudal' ? ' m³/s' : id === 'altura' ? ' m' : '%');
+                    historyData = [];
+                    calculate();
+                });
+            });
+
+            document.getElementById('turbineType').addEventListener('change', () => {
+                historyData = [];
+                calculate();
+            });
+        }
+
+        window.addEventListener('load', () => {
+            initCharts();
+            setupEventListeners();
+            calculate();
+        });
+    </script>
+    <Label>INTEGRANTES:
+            Maucaylla Gonzales Josue Orlando
+            Guevara Valle, Pablo Fabrizio
+            Cerna Félix, Alexander Rai
+            Domínguez Soza, Frank Julinho</Label>
+</body>
+</html>
